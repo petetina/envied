@@ -28,6 +28,8 @@ class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
         element: enviedEl,
       );
     }
+    print("coucou : ");
+    print(annotation.read('environments').literalValue?.toString());
 
     var environmentsString = annotation.read('environments').literalValue as String?;
     var environments = <Envied>[];
