@@ -11,7 +11,7 @@ dependencies:
   envied: 
     git:
       url: https://github.com/petetina/envied.git
-      ref: technical/multiple-env-file
+      ref: main
       path: packages/envied/
   build: ^2.3.0
   source_gen: ^1.2.2
