@@ -8,7 +8,8 @@ environment:
   sdk: ">=2.17.1 <3.0.0"
 
 dependencies:
-  envied: ^0.3.0
+  envied: 
+    path: '../envied'
   build: ^2.3.0
   source_gen: ^1.2.2
   analyzer: ^5.1.0
