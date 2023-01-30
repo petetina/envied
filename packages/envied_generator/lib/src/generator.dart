@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:analyzer/dart/constant/value.dart';
@@ -13,7 +14,7 @@ import 'package:source_gen/source_gen.dart';
 ///
 /// Will throw an [InvalidGenerationSourceError] if the annotated
 /// element is not a [classElement].
-class EnviedGenerator extends GeneratorForAnnotation<Envied> {
+class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
   @override
   Future<String> generateForAnnotatedElement(
     Element element,
@@ -28,50 +29,70 @@ class EnviedGenerator extends GeneratorForAnnotation<Envied> {
       );
     }
 
-    final config = Envied(
-      path: annotation.read('path').literalValue as String?,
-      requireEnvFile: annotation.read('requireEnvFile').literalValue as bool? ?? false,
-      name: annotation.read('name').literalValue as String?,
-      obfuscate: annotation.read('obfuscate').literalValue as bool,
-    );
-
-    final envs = await loadEnvs(config.path, (error) {
-      if (config.requireEnvFile) {
-        throw InvalidGenerationSourceError(
-          error,
-          element: enviedEl,
-        );
-      }
-    });
-
-    TypeChecker enviedFieldChecker = TypeChecker.fromRuntime(EnviedField);
-    final lines = enviedEl.supertype?.element.fields.map((fieldEl) {
-      if (enviedFieldChecker.hasAnnotationOf(fieldEl)) {
-        DartObject? dartObject = enviedFieldChecker.firstAnnotationOf(fieldEl);
-        ConstantReader reader = ConstantReader(dartObject);
-
-        String varName = reader.read('varName').literalValue as String? ?? fieldEl.name;
-        String? varValue;
-        if (envs.containsKey(varName)) {
-          varValue = envs[varName];
-        } else if (Platform.environment.containsKey(varName)) {
-          varValue = Platform.environment[varName];
+    var environmentsString = annotation.read('environments').literalValue as String?;
+    var environments = <Envied>[];
+    if (environmentsString != null && environmentsString.isNotEmpty) {
+      print(environmentsString);
+      try {
+        var map = json.decode(environmentsString);
+        for (var env in map) {
+          final config = Envied(
+            path: env.path as String?,
+            requireEnvFile: env.requireEnvFile as bool? ?? false,
+            name: env.name as String?,
+            obfuscate: env.obfuscate as bool,
+          );
+          environments.add(config);
         }
-        final bool obfuscate = reader.read('obfuscate').literalValue as bool? ?? config.obfuscate;
-
-        return (obfuscate ? generateLineEncrypted : generateLine)(
-          fieldEl,
-          varValue,
-        );
-      } else {
-        return '';
+      } on Exception {
+        throw InvalidGenerationSourceError('Unable to parse environments parameter.');
       }
-    });
+    } else {
+      print("nulllllllll");
+    }
+    final enviedMultiple = EnviedMultiple(environments);
 
-    return '''
-    class _${config.name ?? enviedEl.name} {
+    var result = "";
+    for (var env in enviedMultiple.environments) {
+      final envs = await loadEnvs(env.path, (error) {
+        if (env.requireEnvFile) {
+          throw InvalidGenerationSourceError(
+            error,
+            element: enviedEl,
+          );
+        }
+      });
+
+      TypeChecker enviedFieldChecker = TypeChecker.fromRuntime(EnviedField);
+      final lines = enviedEl.supertype?.element.fields.map((fieldEl) {
+        if (enviedFieldChecker.hasAnnotationOf(fieldEl)) {
+          DartObject? dartObject = enviedFieldChecker.firstAnnotationOf(fieldEl);
+          ConstantReader reader = ConstantReader(dartObject);
+
+          String varName = reader.read('varName').literalValue as String? ?? fieldEl.name;
+          String? varValue;
+          if (envs.containsKey(varName)) {
+            varValue = envs[varName];
+          } else if (Platform.environment.containsKey(varName)) {
+            varValue = Platform.environment[varName];
+          }
+          final bool obfuscate = reader.read('obfuscate').literalValue as bool? ?? env.obfuscate;
+
+          return (obfuscate ? generateLineEncrypted : generateLine)(
+            fieldEl,
+            varValue,
+          );
+        } else {
+          return '';
+        }
+      });
+      result += '''
+    class _${env.name ?? enviedEl.name} {
       ${lines?.toList().join()}
     }
     ''';
+    }
+
+    return result;
   }
 }
