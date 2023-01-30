@@ -64,7 +64,7 @@ class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
       });
 
       TypeChecker enviedFieldChecker = TypeChecker.fromRuntime(EnviedField);
-      final lines = enviedEl.supertype?.element.fields.map((fieldEl) {
+      final lines = enviedEl.fields.map((fieldEl) {
         if (enviedFieldChecker.hasAnnotationOf(fieldEl)) {
           DartObject? dartObject = enviedFieldChecker.firstAnnotationOf(fieldEl);
           ConstantReader reader = ConstantReader(dartObject);
