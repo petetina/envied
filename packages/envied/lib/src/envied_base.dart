@@ -26,7 +26,7 @@ class Envied {
   /// ```dart
   /// abstract class _Foo {}
   /// ```
-  final String? name;
+  final String name;
 
   /// Allows all the values to be encrypted using a random
   /// generated key that is then XOR'd with the encrypted
@@ -36,7 +36,7 @@ class Envied {
   /// **Can be overridden by the per-field obfuscate option!**
   final bool obfuscate;
 
-  const Envied({String? path, bool? requireEnvFile, this.name, this.obfuscate = false})
+  const Envied({String? path, bool? requireEnvFile, required this.name, this.obfuscate = false})
       : path = path ?? '.env',
         requireEnvFile = requireEnvFile ?? false;
 }
