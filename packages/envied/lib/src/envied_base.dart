@@ -1,5 +1,3 @@
-import 'package:envied/src/env_type.dart';
-
 /// Annotation used to specify the class to contain environment variables that will be generated from a `.env` file.
 class Envied {
   /// The file path of the `.env` file, relative to the project root, which
@@ -7,8 +5,6 @@ class Envied {
   ///
   /// If `null` or an empty [String], `.env` is used.
   final String path;
-
-  final Map<EnvType, String>? envFiles;
 
   /// Whether to require a env file exists, or else the build_runner will fail if the file does not exits
   final bool requireEnvFile;
@@ -40,7 +36,7 @@ class Envied {
   /// **Can be overridden by the per-field obfuscate option!**
   final bool obfuscate;
 
-  const Envied({String? path, this.envFiles, bool? requireEnvFile, this.name, this.obfuscate = false})
+  const Envied({String? path, bool? requireEnvFile, this.name, this.obfuscate = false})
       : path = path ?? '.env',
         requireEnvFile = requireEnvFile ?? false;
 }
