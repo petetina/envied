@@ -34,8 +34,8 @@ String generateLineEncrypted(FieldElement field, String? value) {
       } else {
         final key = rand.nextInt(1 << 32);
         final encValue = parsed ^ key;
-        return 'static final int $keyName = $key;\n'
-            'static final int $name = $keyName ^ $encValue;';
+        return 'final int $keyName = $key;\n'
+            'final int $name = $keyName ^ $encValue;';
       }
     case "bool":
       final lowercaseValue = value.toLowerCase();
@@ -43,8 +43,8 @@ String generateLineEncrypted(FieldElement field, String? value) {
         final parsed = lowercaseValue == 'true';
         final key = rand.nextBool();
         final encValue = parsed ^ key;
-        return 'static final bool $keyName = $key;\n'
-            'static final bool $name = $keyName ^ $encValue;';
+        return 'final bool $keyName = $key;\n'
+            'final bool $name = $keyName ^ $encValue;';
       } else {
         throw InvalidGenerationSourceError(
           'Type `$type` does not align up to value `$value`.',
@@ -57,13 +57,11 @@ String generateLineEncrypted(FieldElement field, String? value) {
       final key = parsed.map((e) => rand.nextInt(1 << 32)).toList(
             growable: false,
           );
-      final encValue = List.generate(parsed.length, (i) => i, growable: false)
-          .map((i) => parsed[i] ^ key[i])
-          .toList(growable: false);
+      final encValue = List.generate(parsed.length, (i) => i, growable: false).map((i) => parsed[i] ^ key[i]).toList(growable: false);
       final encName = '_envieddata$name';
-      return 'static const List<int> $keyName = [${key.join(", ")}];\n'
-          'static const List<int> $encName = [${encValue.join(", ")}];\n'
-          'static final ${type == 'dynamic' ? '' : 'String'} $name = String.fromCharCodes(\n'
+      return ' const List<int> $keyName = [${key.join(", ")}];\n'
+          ' const List<int> $encName = [${encValue.join(", ")}];\n'
+          'final ${type == 'dynamic' ? '' : 'String'} $name = String.fromCharCodes(\n'
           '  List.generate($encName.length, (i) => i, growable: false)\n'
           '      .map((i) => $encName[i] ^ $keyName[i])\n'
           '      .toList(growable: false),\n'
