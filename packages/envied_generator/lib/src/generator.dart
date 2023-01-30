@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:analyzer/dart/constant/value.dart';
@@ -28,22 +27,21 @@ class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
         element: enviedEl,
       );
     }
-    print("coucou : ");
-    print(annotation.read('environments').literalValue?.toString());
 
-    var environmentsString = annotation.read('environments').literalValue as String?;
+    var environmentsObject = annotation.read('environments').listValue;
     var environments = <Envied>[];
-    if (environmentsString != null && environmentsString.isNotEmpty) {
-      print(environmentsString);
+    if (environmentsObject.isNotEmpty) {
+      print(environmentsObject);
       try {
-        var map = json.decode(environmentsString);
-        for (var env in map) {
+        //var map = json.decode(environmentsString);
+        for (var env in environmentsObject) {
           final config = Envied(
-            path: env.path as String?,
-            requireEnvFile: env.requireEnvFile as bool? ?? false,
-            name: env.name as String?,
-            obfuscate: env.obfuscate as bool,
+            path: env.getField('path')?.toStringValue(), //.literalValue as String?,
+            requireEnvFile: env.getField('requireEnvFile')?.toBoolValue() ?? false,
+            name: env.getField('name')?.toStringValue(),
+            obfuscate: env.getField('obfuscate')?.toBoolValue() ?? false,
           );
+
           environments.add(config);
         }
       } on Exception {
