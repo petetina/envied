@@ -83,7 +83,7 @@ class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
         }
       });
       result += '''
-    class _${env.name} extends ${enviedEl.name} {
+    class ${env.name} extends ${enviedEl.name} {
       ${lines?.toList().join()}
     }
     ''';
