@@ -31,9 +31,7 @@ class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
     var environmentsObject = annotation.read('environments').listValue;
     var environments = <Envied>[];
     if (environmentsObject.isNotEmpty) {
-      print(environmentsObject);
       try {
-        //var map = json.decode(environmentsString);
         for (var env in environmentsObject) {
           final config = Envied(
             path: env.getField('path')?.toStringValue(), //.literalValue as String?,
@@ -47,8 +45,6 @@ class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
       } on Exception {
         throw InvalidGenerationSourceError('Unable to parse environments parameter.');
       }
-    } else {
-      print("nulllllllll");
     }
     final enviedMultiple = EnviedMultiple(environments);
 
