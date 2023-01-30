@@ -9,7 +9,10 @@ environment:
 
 dependencies:
   envied: 
-    path: '../envied'
+    git:
+      url: https://github.com/petetina/envied.git
+      ref: main
+      path: packages/envied/
   build: ^2.3.0
   source_gen: ^1.2.2
   analyzer: ^5.1.0
