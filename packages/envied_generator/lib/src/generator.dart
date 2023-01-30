@@ -30,8 +30,7 @@ class EnviedGenerator extends GeneratorForAnnotation<Envied> {
 
     final config = Envied(
       path: annotation.read('path').literalValue as String?,
-      requireEnvFile:
-          annotation.read('requireEnvFile').literalValue as bool? ?? false,
+      requireEnvFile: annotation.read('requireEnvFile').literalValue as bool? ?? false,
       name: annotation.read('name').literalValue as String?,
       obfuscate: annotation.read('obfuscate').literalValue as bool,
     );
@@ -46,30 +45,19 @@ class EnviedGenerator extends GeneratorForAnnotation<Envied> {
     });
 
     TypeChecker enviedFieldChecker = TypeChecker.fromRuntime(EnviedField);
-
-    final lines = enviedEl.fields.map((fieldEl) {
+    final lines = enviedEl.supertype?.element.fields.map((fieldEl) {
       if (enviedFieldChecker.hasAnnotationOf(fieldEl)) {
         DartObject? dartObject = enviedFieldChecker.firstAnnotationOf(fieldEl);
         ConstantReader reader = ConstantReader(dartObject);
 
-        String varName =
-            reader.read('varName').literalValue as String? ?? fieldEl.name;
-
-        Object? defaultValue = reader.read('defaultValue').literalValue;
-
+        String varName = reader.read('varName').literalValue as String? ?? fieldEl.name;
         String? varValue;
         if (envs.containsKey(varName)) {
           varValue = envs[varName];
         } else if (Platform.environment.containsKey(varName)) {
           varValue = Platform.environment[varName];
-        } else {
-          if (defaultValue != null) {
-            varValue = defaultValue.toString();
-          }
         }
-
-        final bool obfuscate =
-            reader.read('obfuscate').literalValue as bool? ?? config.obfuscate;
+        final bool obfuscate = reader.read('obfuscate').literalValue as bool? ?? config.obfuscate;
 
         return (obfuscate ? generateLineEncrypted : generateLine)(
           fieldEl,
@@ -82,7 +70,7 @@ class EnviedGenerator extends GeneratorForAnnotation<Envied> {
 
     return '''
     class _${config.name ?? enviedEl.name} {
-      ${lines.toList().join()}
+      ${lines?.toList().join()}
     }
     ''';
   }
