@@ -36,7 +36,7 @@ class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
           final config = Envied(
             path: env.getField('path')?.toStringValue(), //.literalValue as String?,
             requireEnvFile: env.getField('requireEnvFile')?.toBoolValue() ?? false,
-            name: env.getField('name').toString(),
+            name: env.getField('name')!.toStringValue()!,
             obfuscate: env.getField('obfuscate')?.toBoolValue() ?? false,
           );
 
