@@ -34,7 +34,6 @@ class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
         for (var env in environmentsObject) {
           final config = Envied(
             path: env.getField('path')?.toStringValue(), //.literalValue as String?,
-            requireEnvFile: env.getField('requireEnvFile')?.toBoolValue() ?? false,
             name: env.getField('name')!.toStringValue()!,
           );
 
@@ -48,13 +47,11 @@ class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
 
     var result = "";
     for (var env in enviedMultiple.environments) {
-      final envs = await loadEnvs(env.path, (error) {
-        if (env.requireEnvFile) {
-          throw InvalidGenerationSourceError(
-            error,
-            element: enviedEl,
-          );
-        }
+      final envs = await loadEnvs(env.path, env.defaultPath, (error) {
+        throw InvalidGenerationSourceError(
+          error,
+          element: enviedEl,
+        );
       });
 
       TypeChecker enviedFieldChecker = TypeChecker.fromRuntime(EnviedField);
