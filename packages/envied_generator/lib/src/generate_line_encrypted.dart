@@ -35,7 +35,7 @@ String generateLineEncrypted(FieldElement field, String? value) {
         final key = rand.nextInt(1 << 32);
         final encValue = parsed ^ key;
         return 'final int $keyName = $key;\n'
-            '@override final int $name = $keyName ^ $encValue;';
+            ' final int $name = $keyName ^ $encValue;';
       }
     case "bool":
       final lowercaseValue = value.toLowerCase();
@@ -44,7 +44,7 @@ String generateLineEncrypted(FieldElement field, String? value) {
         final key = rand.nextBool();
         final encValue = parsed ^ key;
         return 'final bool $keyName = $key;\n'
-            '@override final bool $name = $keyName ^ $encValue;';
+            ' final bool $name = $keyName ^ $encValue;';
       } else {
         throw InvalidGenerationSourceError(
           'Type `$type` does not align up to value `$value`.',
@@ -61,7 +61,7 @@ String generateLineEncrypted(FieldElement field, String? value) {
       final encName = '_envieddata$name';
       return 'static const List<int> $keyName = [${key.join(", ")}];\n'
           'static const List<int> $encName = [${encValue.join(", ")}];\n'
-          '@override final ${type == 'dynamic' ? '' : 'String'} $name = String.fromCharCodes(\n'
+          ' final ${type == 'dynamic' ? '' : 'String'} $name = String.fromCharCodes(\n'
           '  List.generate($encName.length, (i) => i, growable: false)\n'
           '      .map((i) => $encName[i] ^ $keyName[i])\n'
           '      .toList(growable: false),\n'
