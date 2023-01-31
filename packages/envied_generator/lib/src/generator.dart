@@ -4,7 +4,6 @@ import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:envied/envied.dart';
-import 'package:envied_generator/src/generate_line.dart';
 import 'package:envied_generator/src/generate_line_encrypted.dart';
 import 'package:envied_generator/src/load_envs.dart';
 import 'package:source_gen/source_gen.dart';
@@ -37,7 +36,6 @@ class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
             path: env.getField('path')?.toStringValue(), //.literalValue as String?,
             requireEnvFile: env.getField('requireEnvFile')?.toBoolValue() ?? false,
             name: env.getField('name')!.toStringValue()!,
-            obfuscate: env.getField('obfuscate')?.toBoolValue() ?? false,
           );
 
           environments.add(config);
@@ -72,19 +70,15 @@ class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
           } else if (Platform.environment.containsKey(varName)) {
             varValue = Platform.environment[varName];
           }
-          final bool obfuscate = reader.read('obfuscate').literalValue as bool? ?? env.obfuscate;
 
-          return (obfuscate ? generateLineEncrypted : generateLine)(
-            fieldEl,
-            varValue,
-          );
+          return generateLineEncrypted(fieldEl, varValue);
         } else {
           return '';
         }
       });
       result += '''
     class ${env.name} extends ${enviedEl.name} {
-      ${lines?.toList().join()}
+      ${lines.toList().join()}
     }
     ''';
     }
