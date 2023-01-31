@@ -13,11 +13,16 @@ Future<Map<String, String>> loadEnvs(
 ) async {
   const parser = Parser();
   final file = File.fromUri(Uri.file(path));
+  final defaultFile = File.fromUri(Uri.file(".env"));
 
   var lines = <String>[];
   if (await file.exists()) {
     print(file.path);
     lines = await file.readAsLines();
+  } else if (await defaultFile.exists()) {
+    print("Using default .env file");
+    print(defaultFile.path);
+    lines = await defaultFile.readAsLines();
   } else {
     onError("Environment variable file doesn't exist at `$path`.");
   }
