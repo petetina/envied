@@ -5,9 +5,7 @@ class Envied {
   ///
   /// If `null` or an empty [String], `.env` is used.
   final String path;
-
-  /// Whether to require a env file exists, or else the build_runner will fail if the file does not exits
-  final bool requireEnvFile;
+  final String defaultPath;
 
   /// The value to use as name for the generated class, with
   /// an underscore `_` prefixed.
@@ -28,9 +26,7 @@ class Envied {
   /// ```
   final String name;
 
-  const Envied({String? path, bool? requireEnvFile, required this.name})
-      : path = path ?? '.env',
-        requireEnvFile = requireEnvFile ?? false;
+  const Envied({String? path, this.defaultPath = ".env", required this.name}) : path = path ?? defaultPath;
 }
 
 /// Annotation used to specify an environment variable that should be generated from the `.env` file specified in the [Envied] path parameter.
