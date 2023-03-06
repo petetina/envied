@@ -48,7 +48,7 @@ class EnviedGenerator extends GeneratorForAnnotation<EnviedMultiple> {
 
     var result = "";
     for (var env in enviedMultiple.environments) {
-      final envs = await loadEnvs(env.path, env.defaultPath, (error) {
+      final envs = await loadEnvs(env.name, env.path, env.defaultPath, (error) {
         throw InvalidGenerationSourceError(
           error,
           element: enviedEl,
