@@ -1,12 +1,12 @@
 targets:
   $default:
     builders:
-      envied_generator|envied:
+      envied:
         enabled: True
 
 builders:
   envied:
-    import: "package:envied_generator/src/generator/builder.dart"
+    import: "package:envied/src/generator/builder.dart"
     builder_factories: ["enviedBuilder"]
     build_extensions:
       .dart:
