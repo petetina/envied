@@ -4,9 +4,10 @@ import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:envied/envied.dart';
-import 'package:envied_generator/src/generate_line_encrypted.dart';
-import 'package:envied_generator/src/load_envs.dart';
 import 'package:source_gen/source_gen.dart';
+
+import 'generate_line_encrypted.dart';
+import 'load_envs.dart';
 
 /// Generate code for classes annotated with the `@Envied()`.
 ///
